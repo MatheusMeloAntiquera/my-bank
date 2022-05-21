@@ -15,8 +15,6 @@ return new class extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email');
             $table->decimal('balance', 8, 4);
             $table->boolean('active');
             $table->timestamps();
