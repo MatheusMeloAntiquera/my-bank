@@ -4,11 +4,13 @@ namespace App\Domain\Entity;
 
 use DateTime;
 
-class Account
+class User
 {
     public int $id;
-    public float $balance;
+    public string $name;
+    public string $email;
     public bool $active;
+    public ?int $account_id;
     public Datetime $created_at;
     public ?DateTime $updated_at;
 }

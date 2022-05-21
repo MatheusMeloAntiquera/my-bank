@@ -13,10 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('accounts', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->decimal('balance', 8, 4);
+            $table->string('name');
+            $table->string('email');
             $table->boolean('active');
+            $table->unsignedBigInteger("account_id")->nullable();
+            $table->foreign('account_id')->references('id')->on('accounts');
             $table->timestamps();
         });
     }
@@ -28,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('accounts');
+        Schema::dropIfExists('users');
     }
 };
