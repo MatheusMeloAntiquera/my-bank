@@ -16,11 +16,11 @@ return new class extends Migration
         Schema::create('events', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger("type");
-            $table->unsignedBigInteger("origin");
+            $table->unsignedBigInteger("origin")->nullable();
             $table->unsignedBigInteger("destination")->nullable();
             $table->decimal('amount', 8, 4);
-            $table->foreign('origin')->references('id')->on('accounts');
-            $table->foreign('destination')->references('id')->on('accounts');
+            $table->foreign('origin')->references('id')->on('users');
+            $table->foreign('destination')->references('id')->on('users');
             $table->timestamps();
         });
     }

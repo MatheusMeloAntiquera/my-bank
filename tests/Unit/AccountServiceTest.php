@@ -53,6 +53,9 @@ class AccountServiceTest extends TestCase
             }
         );
 
+        /**
+         * @var AccountService $accountService
+         */
         $this->accountService = App::make(AccountService::class);
         $account = $this->accountService->findByAccountId(1);
         $this->assertInstanceOf(Account::class, $account);
