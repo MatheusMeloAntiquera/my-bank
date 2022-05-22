@@ -47,10 +47,20 @@ class AccountRepository implements AccountRepositoryInterface
         return $account;
     }
 
-    public function findOrCreate(?int $accountId): Account
+    public function findOrCreate(?int $accountId, $balance = 0.0): Account
     {
         $account = $this->findById($accountId);
-        return !empty($account) ? $account : $this->create(new Account());
+        if (!empty($account)) {
+            return $account;
+        }
+
+        $newAccount = new Account(
+            id: $accountId,
+            balance: $balance,
+            created_at: new DateTime("now")
+        );
+
+        return $this->create($newAccount);
     }
 
     public function updateBalance(Account $account, float $newBalance): Account
@@ -58,7 +68,7 @@ class AccountRepository implements AccountRepositoryInterface
         $affected = DB::table($this->table)
             ->where('id', $account->id)
             ->update(['balance' => $newBalance]);
-        if($affected != 1){
+        if ($affected != 1) {
             throw new Exception("It was not possible update the balance");
         }
 

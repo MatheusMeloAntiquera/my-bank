@@ -5,13 +5,11 @@ namespace Tests\Unit;
 use DateTime;
 use Tests\TestCase;
 use Mockery\MockInterface;
-use App\Domain\Entity\User;
 use App\Domain\Entity\Event;
 use App\Domain\Entity\Account;
 use App\UseCase\Event\EventService;
 use Illuminate\Support\Facades\App;
 use App\UseCase\Event\EventDepositDto;
-use App\Domain\Repositories\UserRepositoryInterface;
 use App\Domain\Repositories\EventRepositoryInterface;
 use App\Domain\Repositories\AccountRepositoryInterface;
 
@@ -24,25 +22,13 @@ class EventServiceTest extends TestCase
     public function shouldCreateAccountWithInitialBalance()
     {
         $amount = 150.00;
-        $user = new User(
-            id: 10,
-            name: 'John Snow',
-            email: "jon_snow@stark.com",
-            created_at: new DateTime("2022-05-21 12:00:00")
-        );
-
-        $this->partialMock(
-            UserRepositoryInterface::class,
-            function (MockInterface $mock) use ($user) {
-                $mock->shouldReceive('findById')->once()->andReturn($user);
-            }
-        );
+        $accountId = 100;
 
         $this->partialMock(
             AccountRepositoryInterface::class,
-            function (MockInterface $mock) use ($amount) {
+            function (MockInterface $mock) use ($amount, $accountId) {
                 $account = new Account();
-                $account->id = 1;
+                $account->id = $accountId;
                 $account->active = true;
                 $account->balance = $amount;
                 $account->created_at = new DateTime("2022-05-21 12:00:00");
@@ -54,12 +40,12 @@ class EventServiceTest extends TestCase
 
         $this->partialMock(
             EventRepositoryInterface::class,
-            function (MockInterface $mock) use ($user) {
+            function (MockInterface $mock) {
                 $event = new Event(
                     id: 1,
                     type: Event::TYPE_DEPOSIT,
                     amount: 150.00,
-                    destination: $user->id,
+                    destination: 100,
                     created_at: new DateTime("now")
                 );
                 $mock->shouldReceive('create')->once()->andReturn($event);
@@ -70,10 +56,10 @@ class EventServiceTest extends TestCase
          * @var EventService $eventService
          */
         $this->eventService = App::make(EventService::class);
-        $eventDepositDto = $this->eventService->deposit($user->id, 150.00);
+        $eventDepositDto = $this->eventService->deposit($accountId, 150.00);
         $this->assertInstanceOf(EventDepositDto::class, $eventDepositDto);
         $eventDepositDtoArray = $eventDepositDto->__toArray();
-        $this->assertEquals(10, $eventDepositDtoArray['destination']['id']);
+        $this->assertEquals($accountId, $eventDepositDtoArray['destination']['id']);
         $this->assertEquals(150, $eventDepositDtoArray['destination']['balance']);
     }
 }
