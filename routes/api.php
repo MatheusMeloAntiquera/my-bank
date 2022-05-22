@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Infra\Http\Controllers\ResetController;
 use App\Infra\Http\Controllers\AccountController;
 
 /*
@@ -16,4 +17,8 @@ use App\Infra\Http\Controllers\AccountController;
 
 Route::controller(AccountController::class)->group(function () {
     Route::get('/balance', 'getBalance');
+});
+
+Route::controller(ResetController::class)->group(function () {
+    Route::post('/reset', 'reset');
 });
