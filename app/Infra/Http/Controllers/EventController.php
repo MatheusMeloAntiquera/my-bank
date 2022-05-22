@@ -3,7 +3,6 @@
 namespace App\Infra\Http\Controllers;
 
 use Exception;
-use ReflectionClass;
 use Illuminate\Http\Request;
 use App\UseCase\Event\EventServiceInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -13,7 +12,8 @@ class EventController extends Controller
     private EventServiceInterface $eventService;
     private $typeAllowed = [
         "deposit",
-        "withdraw"
+        "withdraw",
+        "transfer"
     ];
     public function __construct(EventServiceInterface $eventService)
     {
@@ -40,6 +40,19 @@ class EventController extends Controller
                 case "withdraw":
                     $result = $this->eventService->withdraw(
                         $request->input('origin'),
+                        $request->input('amount')
+                    );
+                    if ($result === 0) {
+                        $statusCode = 404;
+                        $responseBody = $result;
+                        break;
+                    }
+                    $responseBody = $result->__toArray();
+                    break;
+                case "transfer":
+                    $result = $this->eventService->transfer(
+                        $request->input('origin'),
+                        $request->input('destination'),
                         $request->input('amount')
                     );
                     if ($result === 0) {
