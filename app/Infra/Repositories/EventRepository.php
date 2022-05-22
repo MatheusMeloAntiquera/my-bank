@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Repositories;
+namespace App\Infra\Repositories;
 
 use DateTime;
 use App\Domain\Entity\Event;
@@ -27,10 +27,10 @@ class EventRepository implements EventRepositoryInterface
         $createdAt = new DateTime("now");
         $id = DB::table($this->table)->insertGetId(
             [
-                'name' => $event->name,
-                'email' => $event->email,
-                'active' => $event->active,
-                'account_id' => $event->account_id,
+                'type' => $event->type,
+                'destination' => $event->destination,
+                'origin' => $event->origin,
+                'amount' => $event->amount,
                 'created_at' => $createdAt,
                 'updated_at' => null,
             ]

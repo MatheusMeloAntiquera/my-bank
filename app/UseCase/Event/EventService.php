@@ -4,43 +4,74 @@ namespace App\UseCase\Event;
 
 use App\Domain\Entity\Event;
 use App\UseCase\Event\EventDepositDto;
-use App\Domain\Repositories\UserRepositoryInterface;
+use App\UseCase\Event\EventTransferDto;
+use App\UseCase\Event\EventWithdrawDto;
 use App\Domain\Repositories\EventRepositoryInterface;
 use App\Domain\Repositories\AccountRepositoryInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class  EventService implements EventServiceInterface
 {
-    private UserRepositoryInterface $userRepository;
     private AccountRepositoryInterface $accountRepository;
     private EventRepositoryInterface $eventRepository;
     public function __construct(
-        UserRepositoryInterface $userRepository,
         AccountRepositoryInterface $accountRepository,
         EventRepositoryInterface $eventRepository
     ) {
-        $this->userRepository = $userRepository;
         $this->accountRepository = $accountRepository;
         $this->eventRepository = $eventRepository;
     }
+
     public function deposit(int $destinationId, float $amount): EventDepositDto
     {
-        $user = $this->userRepository->findById($destinationId);
-
-        if (empty($user)) {
-            throw new NotFoundHttpException("User not found");
-        }
-        $account = $this->accountRepository->findOrCreate($user->account_id);
-
-        $newBalance = $account->balance + $amount;
-        $this->accountRepository->updateBalance($account, $newBalance);
+        $account = $this->accountRepository->findOrCreate($destinationId);
+        $accountUpdated = $this->accountRepository->updateBalance($account, $account->balance + $amount);
 
         $event = $this->eventRepository->create(new Event(
-            destination: $destinationId,
+            destination: $account->id,
             amount: $amount,
             type: Event::TYPE_DEPOSIT,
         ));
 
-        return new EventDepositDto($event->destination, $event->amount);
+        return new EventDepositDto($event->destination, $accountUpdated->balance);
+    }
+
+    public function withdraw(int $originId, float $amount): EventWithdrawDto|int
+    {
+        $account = $this->accountRepository->findById($originId);
+        if (empty($account)) {
+            return 0;
+        }
+
+        $accountUpdated = $this->accountRepository->updateBalance($account, $account->balance - $amount);
+
+        $event = $this->eventRepository->create(new Event(
+            origin: $accountUpdated->id,
+            amount: $amount,
+            type: Event::TYPE_WITHDRAW,
+        ));
+
+        return new EventWithdrawDto($event->origin, $accountUpdated->balance);
+    }
+
+    public function transfer(int $originId, int $destinationId, float $amount): EventTransferDto|int
+    {
+        $origin = $this->accountRepository->findById($originId);
+        if (empty($origin)) {
+            return 0;
+        }
+
+        $destination = $this->accountRepository->findOrCreate($destinationId);
+
+        $originUpdated = $this->accountRepository->updateBalance($origin, $origin->balance - $amount);
+        $destinationUpdated = $this->accountRepository->updateBalance($destination, $destination->balance + $amount);
+
+        $this->eventRepository->create(new Event(
+            origin: $originUpdated->id,
+            destination: $destinationUpdated->id,
+            amount: $amount,
+            type: Event::TYPE_TRANSFER,
+        ));
+
+        return new EventTransferDto($originUpdated, $destinationUpdated);
     }
 }
