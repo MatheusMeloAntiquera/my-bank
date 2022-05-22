@@ -5,7 +5,7 @@ namespace App\Providers;
 use App\UseCase\Event\EventService;
 use App\UseCase\Account\AccountService;
 use Illuminate\Support\ServiceProvider;
-use App\Domain\Repositories\EventRepository;
+use App\Infra\Repositories\EventRepository;
 use App\UseCase\Event\EventServiceInterface;
 use App\Infra\Repositories\AccountRepository;
 use App\UseCase\Account\AccountServiceInterface;

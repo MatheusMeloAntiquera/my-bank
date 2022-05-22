@@ -18,10 +18,9 @@ class  EventService implements EventServiceInterface
         $this->accountRepository = $accountRepository;
         $this->eventRepository = $eventRepository;
     }
-    public function deposit(int $destinationId, float $amount): EventDepositDto
+    public function deposit(int $destination, float $amount): EventDepositDto
     {
-        $account = $this->accountRepository->findOrCreate($destinationId);
-
+        $account = $this->accountRepository->findOrCreate($destination);
         $newBalance = $account->balance + $amount;
         $this->accountRepository->updateBalance($account, $newBalance);
 
@@ -31,6 +30,6 @@ class  EventService implements EventServiceInterface
             type: Event::TYPE_DEPOSIT,
         ));
 
-        return new EventDepositDto($event->destination, $event->amount);
+        return new EventDepositDto($event->destination, $newBalance);
     }
 }

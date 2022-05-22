@@ -30,7 +30,7 @@ class EventServiceTest extends TestCase
                 $account = new Account();
                 $account->id = $accountId;
                 $account->active = true;
-                $account->balance = $amount;
+                $account->balance = 0.0;
                 $account->created_at = new DateTime("2022-05-21 12:00:00");
                 $account->updated_at = null;
                 $mock->shouldReceive('findOrcreate')->once()->andReturn($account);

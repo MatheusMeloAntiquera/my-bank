@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Repositories;
+namespace App\Infra\Repositories;
 
 use DateTime;
 use Exception;
@@ -20,15 +20,13 @@ class AccountRepository implements AccountRepositoryInterface
             return null;
         }
 
-        $account = new Account();
-        $account->id = $result->id;
-        $account->name = $result->name;
-        $account->email = $result->email;
-        $account->active = $result->active;
-        $account->created_at = $result->created_at;
-        $account->updated_at = $result->updated_at;
-
-        return $account;
+        return new Account(
+            id: $result->id,
+            balance: $result->balance,
+            active: $result->active,
+            created_at: $result->created_at == null ? null : new DateTime($result->created_at),
+            updated_at: $result->updated_at == null ? null : new DateTime($result->updated_at),
+        );
     }
 
     public function create(Account $account): Account
@@ -47,7 +45,7 @@ class AccountRepository implements AccountRepositoryInterface
         return $account;
     }
 
-    public function findOrCreate(?int $accountId, $balance = 0.0): Account
+    public function findOrCreate(?int $accountId): Account
     {
         $account = $this->findById($accountId);
         if (!empty($account)) {
@@ -56,11 +54,20 @@ class AccountRepository implements AccountRepositoryInterface
 
         $newAccount = new Account(
             id: $accountId,
-            balance: $balance,
             created_at: new DateTime("now")
         );
 
-        return $this->create($newAccount);
+        DB::table($this->table)->insert(
+            [
+                'id' => $accountId,
+                'balance' => $newAccount->balance,
+                'active' => $newAccount->active,
+                'created_at' => $newAccount->created_at,
+                'updated_at' => null,
+            ]
+        );
+
+        return $newAccount;
     }
 
     public function updateBalance(Account $account, float $newBalance): Account
