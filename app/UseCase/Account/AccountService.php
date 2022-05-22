@@ -4,7 +4,7 @@ namespace App\UseCase\Account;
 
 use App\Domain\Entity\Account;
 use App\UseCase\Account\AccountServiceInterface;
-use App\Application\Repositories\AccountRepositoryInterface;
+use App\Domain\Repositories\AccountRepositoryInterface;
 
 class AccountService implements AccountServiceInterface
 {

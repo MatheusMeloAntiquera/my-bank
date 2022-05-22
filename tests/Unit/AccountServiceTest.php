@@ -8,7 +8,7 @@ use Mockery\MockInterface;
 use App\Domain\Entity\Account;
 use Illuminate\Support\Facades\App;
 use App\UseCase\Account\AccountService;
-use App\Application\Repositories\AccountRepositoryInterface;
+use App\Domain\Repositories\AccountRepositoryInterface;
 
 class AccountServiceTest extends TestCase
 {
