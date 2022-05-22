@@ -4,24 +4,32 @@ namespace App\Domain\Entity;
 
 use DateTime;
 
-class Account
+class Event
 {
+    const TYPE_DEPOSIT = 1;
+
     public ?int $id;
-    public float $balance;
-    public bool $active;
+    public int $type;
+    public float $amount;
+    public ?int $destination;
+    public ?int $origin;
     public ?Datetime $created_at;
     public ?DateTime $updated_at;
 
     public function __construct(
-        float $balance = 0.0,
-        bool $active = true,
+        int $type,
+        float $amount,
         ?int $id = null,
+        ?int $destination = null,
+        ?int $origin = null,
         ?Datetime $created_at = null,
         ?DateTime $updated_at = null,
     ) {
         $this->id = $id;
-        $this->active = $active;
-        $this->balance = $balance;
+        $this->type = $type;
+        $this->amount = $amount;
+        $this->destination = $destination;
+        $this->origin = $origin;
         $this->created_at = $created_at;
         $this->updated_at = $updated_at;
     }
