@@ -6,10 +6,6 @@ use Illuminate\Support\Facades\Artisan;
 
 class ResetController extends Controller
 {
-    public function __construct()
-    {
-    }
-
     public function reset()
     {
         Artisan::call('migrate:refresh', [
