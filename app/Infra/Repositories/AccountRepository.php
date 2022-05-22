@@ -72,14 +72,16 @@ class AccountRepository implements AccountRepositoryInterface
 
     public function updateBalance(Account $account, float $newBalance): Account
     {
+        $updatedAt = new DateTime("now");
         $affected = DB::table($this->table)
             ->where('id', $account->id)
-            ->update(['balance' => $newBalance]);
+            ->update(['balance' => $newBalance, 'updated_at' => $updatedAt]);
         if ($affected != 1) {
             throw new Exception("It was not possible update the balance");
         }
 
         $account->balance = $newBalance;
+        $account->updated_at = $updatedAt;
         return $account;
     }
 }
