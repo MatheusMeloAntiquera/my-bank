@@ -16,7 +16,7 @@ class AccountController extends Controller
     public function getBalance(Request $request)
     {
         $accountId = (int) $request->query('account_id');
-        // dd((int) $accountId);
+
         if (empty($accountId) || !is_int($accountId)) {
             return response()
                 ->json(["message" => "account_id not informed correctly"], 400);
