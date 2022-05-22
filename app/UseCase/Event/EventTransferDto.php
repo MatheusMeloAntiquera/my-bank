@@ -19,11 +19,11 @@ class EventTransferDto
     {
         return [
             "origin" => [
-                "id" => $this->origin->id,
+                "id" => strval($this->origin->id),
                 "balance" => $this->origin->balance
             ],
             "destination" => [
-                "id" => $this->destination->id,
+                "id" => strval($this->destination->id),
                 "balance" => $this->destination->balance
             ]
         ];

@@ -17,7 +17,7 @@ class EventDepositDto
     {
         return [
             "destination" => [
-                "id" => $this->destinationId,
+                "id" => strval($this->destinationId),
                 "balance" => $this->newBalance
             ]
         ];

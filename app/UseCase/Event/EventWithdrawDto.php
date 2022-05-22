@@ -17,7 +17,7 @@ class EventWithdrawDto
     {
         return [
             "origin" => [
-                "id" => $this->originId,
+                "id" => strval($this->originId),
                 "balance" => $this->newBalance
             ]
         ];
